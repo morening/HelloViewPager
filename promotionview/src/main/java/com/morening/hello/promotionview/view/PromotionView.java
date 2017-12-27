@@ -8,8 +8,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.morening.hello.promotionview.contract.Contract;
@@ -55,8 +57,13 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         mPresenter = new PromotionPresenter(this);
 
         mIndicatorView = new IndicatorView(mContext);
+
         mPromotionPager = new PromotionPager(mContext);
+
         mDefaultPage = new PromotionItem(mContext);
+        mDefaultPage.setTitle("广告位招租中...");
+        mDefaultPage.setTitleColor(Color.BLACK);
+        mDefaultPage.setBgDrawable(new ColorDrawable(Color.YELLOW));
     }
 
     public void show(){
@@ -65,7 +72,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
 
     @Override
     public void showItems(final List datas) {
-
+        Log.d("sunning",  "size: "+datas.size());
         initIndicatorView(datas);
 
         initPromotionPager(datas);
@@ -134,9 +141,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
      */
     public PromotionView setIndicatorPosition(RelativeLayout.LayoutParams lp){
 
-        if (mIndicatorView != null){
-            addView(mIndicatorView, lp);
-        }
+        mIndicatorPosition = lp;
 
         return this;
     }
@@ -172,6 +177,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
+    private RelativeLayout.LayoutParams mIndicatorPosition = null;
     private void initIndicatorView(List datas) {
         if (mIndicatorView != null){
             if (mIndicatorView.isColorBalance()){
@@ -179,6 +185,13 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
             }
             mIndicatorView.show(datas.size());
             mIndicatorView.setSelectedItem(0);
+            if (mIndicatorPosition != null){
+                mIndicatorPosition = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                mIndicatorPosition.addRule(CENTER_HORIZONTAL);
+                mIndicatorPosition.addRule(ALIGN_PARENT_BOTTOM);
+                mIndicatorPosition.bottomMargin = 126;
+            }
+            addView(mIndicatorView, mIndicatorPosition);
         }
     }
 
@@ -232,12 +245,13 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
-    private void initPromotionPager(List datas) {
+    private void initPromotionPager(List<T> datas) {
         LayoutParams pager_lp =
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         addView(mPromotionPager, pager_lp);
 
         PromotionPagerAdapter adapter = new PromotionPagerAdapter(mContext);
+        adapter.setData(datas);
         mPromotionPager.setAdapter(adapter);
         mPromotionPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -334,15 +348,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
     @Override
     public void showDefault() {
         removeAllViews();
-        mIndicatorView = null;
-        mPromotionPager = null;
 
-        if (mDefaultPage == null){
-            mDefaultPage = new PromotionItem(mContext);
-            mDefaultPage.setTitle("广告位招租中...");
-            mDefaultPage.setTitleColor(Color.BLACK);
-            mDefaultPage.setBgDrawable(new ColorDrawable(Color.YELLOW));
-        }
         LayoutParams lp =
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         addView(mDefaultPage, lp);
