@@ -12,10 +12,6 @@ public class CacheRepo implements IRepository {
     @Override
     public boolean get(List datas) {
 
-        datas.add(new DataBean("123", null));
-        datas.add(new DataBean("456", null));
-        datas.add(new DataBean("789", null));
-
-        return true;
+        return false;
     }
 }

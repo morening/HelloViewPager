@@ -20,15 +20,16 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
     private Context mContext = null;
     private List<T> mDatas = null;
 
+    private int mTitleSize = 0;
     private int mTitleColor = Color.BLACK;
     private boolean mEnableTitleColorBalance = false;
     private RelativeLayout.LayoutParams mLayoutParams = null;
 
-    public PromotionPagerAdapter(Context context) {
+    protected PromotionPagerAdapter(Context context) {
         this.mContext = context;
     }
 
-    public void setData(List<T> datas){
+    protected void setData(List<T> datas){
         mDatas = datas;
     }
 
@@ -54,6 +55,7 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
         if (mEnableTitleColorBalance){
             balanceTitleColor();
         }
+        item.setTitleSize(mTitleSize);
         item.setTitleColor(mTitleColor);
         item.setTitlePosition(mLayoutParams);
         item.show();
@@ -67,11 +69,15 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
         container.removeView((PromotionItem)object);
     }
 
-    public void setTitleColor(int color){
+    protected void setTitleSize(int size){
+        mTitleSize = size;
+    }
+
+    protected void setTitleColor(int color){
         mTitleColor = color;
     }
 
-    public void enableTitleColorBalance(boolean enable){
+    protected void enableTitleColorBalance(boolean enable){
         mEnableTitleColorBalance = enable;
     }
 
@@ -83,7 +89,7 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
         mTitleColor = color;
     }
 
-    public void setTitlePosition(RelativeLayout.LayoutParams lp){
+    protected void setTitlePosition(RelativeLayout.LayoutParams lp){
         mLayoutParams = lp;
     }
 }

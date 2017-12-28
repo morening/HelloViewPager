@@ -41,6 +41,7 @@ public class DotView extends BaseView {
         int height = getHeight();
         int radius = Math.min(width, height);
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setAntiAlias(true);
         canvas.save();
         canvas.translate(0, 0);
         canvas.drawCircle(radius/2, radius/2, radius/2, mPaint);

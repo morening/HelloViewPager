@@ -1,6 +1,7 @@
 package com.morening.hello.promotionview.contract;
 
 import com.morening.hello.promotionview.model.DataBean;
+import com.morening.hello.promotionview.repository.IRepository;
 import com.morening.hello.promotionview.view.LoadCallback;
 
 import java.util.List;
@@ -19,10 +20,12 @@ public interface Contract<T extends DataBean> {
 
     interface Presenter<T> {
         void start();
+        void addDataRepo(IRepository repo);
     }
 
     interface Model<T> {
         void load(LoadCallback callback);
+        void addDataRepos(List<IRepository> dataRepos);
     }
 
 }

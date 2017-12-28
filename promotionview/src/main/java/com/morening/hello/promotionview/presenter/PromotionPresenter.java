@@ -3,9 +3,11 @@ package com.morening.hello.promotionview.presenter;
 import com.morening.hello.promotionview.contract.Contract;
 import com.morening.hello.promotionview.model.DataBean;
 import com.morening.hello.promotionview.model.PromotionModel;
+import com.morening.hello.promotionview.repository.IRepository;
 import com.morening.hello.promotionview.view.LoadCallback;
 import com.morening.hello.promotionview.view.PromotionView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,8 +19,11 @@ public class PromotionPresenter<T extends DataBean> implements Contract.Presente
     private Contract.View mView = null;
     private Contract.Model mModel = null;
 
+    private List<IRepository> mDataRepos = null;
+
     public PromotionPresenter(PromotionView view) {
         this.mView = view;
+        mDataRepos = new ArrayList<>();
     }
 
     @Override
@@ -30,6 +35,8 @@ public class PromotionPresenter<T extends DataBean> implements Contract.Presente
         if (mModel == null){
             mModel = new PromotionModel();
         }
+        mModel.addDataRepos(mDataRepos);
+
         mModel.load(new LoadCallback() {
             @Override
             public void onSuccess(List datas) {
@@ -42,5 +49,13 @@ public class PromotionPresenter<T extends DataBean> implements Contract.Presente
                 mView.showDefault();
             }
         });
+    }
+
+    @Override
+    public void addDataRepo(IRepository repo) {
+        if (mDataRepos == null){
+            mDataRepos = new ArrayList<>();
+        }
+        mDataRepos.add(repo);
     }
 }

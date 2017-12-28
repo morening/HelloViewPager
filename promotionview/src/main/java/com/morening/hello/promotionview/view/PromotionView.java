@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,11 @@ import android.widget.RelativeLayout;
 
 import com.morening.hello.promotionview.contract.Contract;
 import com.morening.hello.promotionview.presenter.PromotionPresenter;
+import com.morening.hello.promotionview.repository.CacheRepo;
+import com.morening.hello.promotionview.repository.DatabaseRepo;
+import com.morening.hello.promotionview.repository.IRepository;
+import com.morening.hello.promotionview.repository.RemoteRepo;
+import com.morening.hello.promotionview.util.Utils;
 
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
 
     private int mCurrPosition = 0;
 
+    private static final int DEFAULT_INDICATOR_MARGIN_BOTTOM = 126;
     private static final long DEFAULT_INTERVAL_AUTO_SCROLL = 3000L;
     private long mAutoScrollInterval = DEFAULT_INTERVAL_AUTO_SCROLL;
 
@@ -62,8 +67,8 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
 
         mDefaultPage = new PromotionItem(mContext);
         mDefaultPage.setTitle("广告位招租中...");
+        mDefaultPage.setTitleSize(Utils.sp2px(mContext, 30));
         mDefaultPage.setTitleColor(Color.BLACK);
-        mDefaultPage.setBgDrawable(new ColorDrawable(Color.YELLOW));
     }
 
     public void show(){
@@ -72,11 +77,8 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
 
     @Override
     public void showItems(final List datas) {
-        Log.d("sunning",  "size: "+datas.size());
         initIndicatorView(datas);
-
         initPromotionPager(datas);
-
         if (mEnableAutoScroll){
             mPromotionPager.startAutoScroll(0);
         }
@@ -86,46 +88,11 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
     /****** Indicator View ******/
 
     /*
-     * set the width of Indicator
-     *
-     * @param width the width
-     */
-    public PromotionView setIndicatorWidth(int width){
-
-        if (mIndicatorView != null){
-            LayoutParams lp = (LayoutParams) mIndicatorView.getLayoutParams();
-            lp.width = width;
-            mIndicatorView.setLayoutParams(lp);
-        }
-
-        return this;
-    }
-
-
-    /*
-     * set the height of Indicator
-     *
-     * @param height the height
-     */
-    public PromotionView setIndicatorHeight(int height){
-
-        if (mIndicatorView != null){
-            LayoutParams lp = (LayoutParams) mIndicatorView.getLayoutParams();
-            lp.height = height;
-            mIndicatorView.setLayoutParams(lp);
-        }
-
-        return this;
-    }
-
-
-    /*
      * set custom view for the Indicator
      *
      * @param customViews the list of custom view extends from BaseView {@link BaseView}
      */
     public PromotionView setIndicatorCustomView(List<T> customViews){
-
         if (mIndicatorView != null){
             mIndicatorView.setCustomViews(customViews);
         }
@@ -133,17 +100,33 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
+    public PromotionView setIndicatorCustomViewPosition(int width, int height, int marginStart, int marginEnd){
+        if (mIndicatorView != null){
+            mIndicatorView.setCustomViewsPosition(width, height, marginStart, marginEnd);
+        }
+
+        return this;
+
+    }
 
     /*
-     * set the position the Indicator
+     * set the position of the Indicator
      *
      * @param lp the type is RelativeLayout.LayoutParams
      */
-    public PromotionView setIndicatorPosition(RelativeLayout.LayoutParams lp){
-
+    public PromotionView setIndicatorPosition(LayoutParams lp){
         mIndicatorPosition = lp;
 
         return this;
+    }
+
+    /*
+     * get the position of the Indicator
+     *
+     * @return RelativeLayout.LayoutParams
+     */
+    public LayoutParams getIndicatorPosition(){
+        return mIndicatorPosition;
     }
 
 
@@ -177,7 +160,7 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
-    private RelativeLayout.LayoutParams mIndicatorPosition = null;
+    private LayoutParams mIndicatorPosition = null;
     private void initIndicatorView(List datas) {
         if (mIndicatorView != null){
             if (mIndicatorView.isColorBalance()){
@@ -185,14 +168,20 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
             }
             mIndicatorView.show(datas.size());
             mIndicatorView.setSelectedItem(0);
-            if (mIndicatorPosition != null){
-                mIndicatorPosition = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                mIndicatorPosition.addRule(CENTER_HORIZONTAL);
-                mIndicatorPosition.addRule(ALIGN_PARENT_BOTTOM);
-                mIndicatorPosition.bottomMargin = 126;
+            if (mIndicatorPosition == null){
+                mIndicatorPosition = getIndicatorPositionDefault();
             }
             addView(mIndicatorView, mIndicatorPosition);
         }
+    }
+
+    private LayoutParams getIndicatorPositionDefault(){
+        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.addRule(CENTER_HORIZONTAL);
+        lp.addRule(ALIGN_PARENT_BOTTOM);
+        lp.bottomMargin = Utils.dp2px(mContext, DEFAULT_INDICATOR_MARGIN_BOTTOM);
+
+        return lp;
     }
 
     private void balanceIndicatorColor(){
@@ -211,6 +200,13 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
 
 
     /****** Promotion View ******/
+
+    public PromotionView setPromotionTitleSize(int size){
+        if (mPromotionPager != null){
+            mPromotionPager.setTitleSize(size);
+        }
+        return this;
+    }
 
     /*
      * set the color of the Promotion title
@@ -238,6 +234,11 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
+    /*
+     * set title position for every item
+     *
+     * @param lp RelativeLayout.LayoutParams
+     */
     public PromotionView setTitlePosition(LayoutParams lp){
         if (mPromotionPager != null){
             mPromotionPager.setTitlePosition(lp);
@@ -245,10 +246,23 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
+    /*
+     * get the title position
+     *
+     * @return RelativeLayout.LayoutParams
+     */
+    public LayoutParams getTitlePosition(){
+        if (mPromotionPager != null){
+            return mPromotionPager.getTitlePosition();
+        }
+
+        return null;
+    }
+
     private void initPromotionPager(List<T> datas) {
-        LayoutParams pager_lp =
+        LayoutParams lp =
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(mPromotionPager, pager_lp);
+        addView(mPromotionPager, lp);
 
         PromotionPagerAdapter adapter = new PromotionPagerAdapter(mContext);
         adapter.setData(datas);
@@ -306,9 +320,25 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         return this;
     }
 
+    public PromotionView setDefaultPageTitleSize(int size){
+        if (mDefaultPage != null){
+            if (size != 0){
+                mDefaultPage.setTitleSize(size);
+            }
+        }
+        return this;
+    }
+
     public PromotionView setDefaultPageTitleColor(int color){
         if (mDefaultPage != null){
             mDefaultPage.setTitleColor(color);
+        }
+        return this;
+    }
+
+    public PromotionView setDefaultPageTitlePosition(LayoutParams lp){
+        if (mDefaultPage != null){
+            mDefaultPage.setTitlePosition(lp);
         }
         return this;
     }
@@ -345,18 +375,43 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
     /****** Auto Scroll ******/
 
 
+
+    /****** MODEL I/F ******/
+
+    /*
+     * add data repository
+     * The data will be loaded as added sequence. If the first repo could provide the promotion data, the left repo will not be loaded.
+     * So it is important that adding repo as data loaded sequence.
+     * eg, if you have add CacheRepo to load the data saved in cache memory, add DatabaseRepo to load the data from DB and add RemoteRepo to get the data from remote server,
+     * you have to CacheRepo{@link CacheRepo} added firstly, add DatabaseRepo{@link DatabaseRepo} and RemoteRepo{@link RemoteRepo} added at last.
+     * If CacheRepo can't provide data(means return false), then DatabaseRepo will be loaded, and DatabaseRepo could provide data(means return true),
+     * it is no neccessary to load RemoteRepo(mean RemoteRepo will not be loaded any more)
+     *
+     * @param repo IRepository
+     */
+    public PromotionView addDataRepo(IRepository repo){
+        mPresenter.addDataRepo(repo);
+
+        return this;
+    }
+
+    /****** MODEL I/F ******/
+
+
+
+
     @Override
     public void showDefault() {
         removeAllViews();
 
         LayoutParams lp =
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mDefaultPage.show();
         addView(mDefaultPage, lp);
     }
 
     @Override
     public void hideDefault() {
         removeAllViews();
-        mDefaultPage = null;
     }
 }

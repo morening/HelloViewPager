@@ -1,12 +1,8 @@
 package com.morening.hello.promotionview.model;
 
 import com.morening.hello.promotionview.contract.Contract;
-import com.morening.hello.promotionview.repository.CacheRepo;
-import com.morening.hello.promotionview.repository.DatabaseRepo;
 import com.morening.hello.promotionview.repository.IRepository;
-import com.morening.hello.promotionview.repository.RemoteRepo;
 import com.morening.hello.promotionview.view.LoadCallback;
-import com.morening.hello.promotionview.view.PromotionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,27 +13,34 @@ import java.util.List;
 
 public class PromotionModel<T extends DataBean> implements Contract.Model {
 
-    private IRepository mCacheRepo = null;
-    private IRepository mDatabaseRepo = null;
-    private IRepository mRemoteRepo = null;
+    private List<IRepository> mDataRepos = null;
 
     public PromotionModel(){
-        mCacheRepo = new CacheRepo();
-        mDatabaseRepo = new DatabaseRepo();
-        mRemoteRepo = new RemoteRepo();
+        mDataRepos = new ArrayList<>();
     }
 
     @Override
     public void load(LoadCallback callback) {
         List<T> datas = new ArrayList();
-        if (mCacheRepo.get(datas)){
-            callback.onSuccess(datas);
-        } else if (mDatabaseRepo.get(datas)) {
-            callback.onSuccess(datas);
-        } else if (mRemoteRepo.get(datas)){
-            callback.onSuccess(datas);
-        } else {
+        boolean isSuccess = false;
+        for (IRepository repo: mDataRepos){
+            if (repo.get(datas)){
+                callback.onSuccess(datas);
+                isSuccess = true;
+                break;
+            }
+        }
+        if (!isSuccess){
             callback.onFail(-1, null);
         }
+    }
+
+    @Override
+    public void addDataRepos(List dataRepos) {
+        if (mDataRepos == null){
+            mDataRepos = new ArrayList<>();
+        }
+        mDataRepos.clear();
+        mDataRepos.addAll(dataRepos);
     }
 }

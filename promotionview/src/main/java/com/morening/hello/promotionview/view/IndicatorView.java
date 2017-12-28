@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 
+import com.morening.hello.promotionview.util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,22 +26,36 @@ class IndicatorView<T extends BaseView> extends LinearLayout{
     private int mSelectedColor = Color.BLACK;
     private int mUnselectedColor = Color.RED;
     private boolean mEnableColorBalance = false;
+    private int mCustomViewWidth = 0;
+    private int mCustomViewHeight = 0;
+    private int mCustomViewMarginStart = 0;
+    private int mCustomViewMarginEnd = 0;
 
-    public IndicatorView(Context context) {
+    private static final int DEFAULT_CUSTOM_VIEW_WIDTH = 28;
+    private static final int DEFAULT_CUSTOM_VIEW_HEIGHT = 28;
+    private static final int DEFAULT_CUSTOM_VIEW_MARGIN_START = 28;
+    private static final int DEFAULT_CUSTOM_VIEW_MARGIN_END = 0;
+
+    protected IndicatorView(Context context) {
         this(context, null);
     }
 
-    public IndicatorView(Context context, @Nullable AttributeSet attrs) {
+    protected IndicatorView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public IndicatorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    protected IndicatorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public IndicatorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    protected IndicatorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         mContext = context;
+
+        mCustomViewWidth = Utils.dp2px(context, DEFAULT_CUSTOM_VIEW_WIDTH);
+        mCustomViewHeight = Utils.dp2px(context, DEFAULT_CUSTOM_VIEW_HEIGHT);
+        mCustomViewMarginStart = Utils.dp2px(context, DEFAULT_CUSTOM_VIEW_MARGIN_START);
+        mCustomViewMarginEnd = Utils.dp2px(context, DEFAULT_CUSTOM_VIEW_MARGIN_END);
     }
 
 
@@ -48,24 +64,32 @@ class IndicatorView<T extends BaseView> extends LinearLayout{
      *
      * @param views the list of views, the type is T which extends from BaseView
      */
-    public void show(int size) {
+    protected void show(int size) {
         if (mCustomViews == null){
             mCustomViews = new ArrayList<>();
         }
+
+        /* get default custom view */
         if (mCustomViews.size() == 0){
             for (int k=0; k<size; k++){
                 mCustomViews.add((T) new DotView(mContext));
             }
         }
+        /* get default custom view */
 
         setOrientation(HORIZONTAL);
-        for (int k = 0; k< mCustomViews.size(); k++){
+        for (int k = 0; k< size; k++){
             LayoutParams lp =
-                    new LayoutParams(56, 56);
+                    new LayoutParams(mCustomViewWidth, mCustomViewHeight);
             if (k == 0){
-                lp.setMarginStart(0);  // todo hardcoding
+                lp.setMarginStart(0);
+                lp.setMarginEnd(mCustomViewMarginEnd);
+            } else if (k == size-1) {
+                lp.setMarginStart(mCustomViewMarginStart);
+                lp.setMarginEnd(0);
             } else {
-                lp.setMarginStart(56);
+                lp.setMarginStart(mCustomViewMarginStart);
+                lp.setMarginEnd(mCustomViewMarginEnd);
             }
             T view = mCustomViews.get(k);
             view.setDotColor(mUnselectedColor);
@@ -79,7 +103,7 @@ class IndicatorView<T extends BaseView> extends LinearLayout{
      *
      * @param position the select position
      */
-    public void setSelectedItem(int position){
+    protected void setSelectedItem(int position){
         if (mCustomViews == null || mCustomViews.size() == 0){
             return;
         }
@@ -94,24 +118,31 @@ class IndicatorView<T extends BaseView> extends LinearLayout{
         }
     }
 
-    public void setCustomViews(List<T> customViews){
+    protected void setCustomViews(List<T> customViews){
         mCustomViews = customViews;
     }
 
-    public void setSelectedColor(int color){
+    protected void setSelectedColor(int color){
         mSelectedColor = color;
     }
 
-    public void setUnselectedColor(int color){
+    protected void setUnselectedColor(int color){
         mUnselectedColor = color;
     }
 
-    public void enableColorBalance(boolean enable){
+    protected void enableColorBalance(boolean enable){
         mEnableColorBalance = enable;
     }
 
-    public boolean isColorBalance(){
+    protected boolean isColorBalance(){
 
         return mEnableColorBalance;
+    }
+
+    protected void setCustomViewsPosition(int width, int height, int marginStart, int marginEnd) {
+        mCustomViewWidth = width;
+        mCustomViewHeight = height;
+        mCustomViewMarginStart = marginStart;
+        mCustomViewMarginEnd = marginEnd;
     }
 }
