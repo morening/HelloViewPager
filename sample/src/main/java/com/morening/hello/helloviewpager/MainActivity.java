@@ -3,6 +3,7 @@ package com.morening.hello.helloviewpager;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -28,16 +31,26 @@ public class MainActivity extends Activity {
 
                 LinearLayout container = new LinearLayout(MainActivity.this);
                 container.setOrientation(LinearLayout.VERTICAL);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getWindow().getDecorView().getMeasuredHeight()/4);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (getWindow().getDecorView().getMeasuredHeight()-3*2)/4);
 
                 initPromotionView0(container, lp);
+                addDivider(container);
                 initPromotionView1(container, lp);
+                addDivider(container);
                 initPromotionView2(container, lp);
+                addDivider(container);
                 initPromotionView3(container, lp);
 
                 setContentView(container);
             }
         });
+    }
+
+    private void addDivider(LinearLayout container){
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 2);
+        View divider = new View(MainActivity.this);
+        divider.setBackgroundColor(Color.GRAY);
+        container.addView(divider, lp);
     }
 
     private void initPromotionView0(LinearLayout container, LinearLayout.LayoutParams lp) {
