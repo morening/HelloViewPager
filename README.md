@@ -1,6 +1,9 @@
 ## 简介
 HelloViewPager是Hello系列的子项目，学习知识点的同时，通过造轮子以提升编程能力。本项目实现了简单的带有自动轮播功能的广告栏，可使用默认设置完成快速应用，也可通过提供的接口，实现广告栏的自定义效果。
 
+<img width="25%" height="25%" src="https://github.com/morening/HelloViewPager/blob/master/snapshot/intro.png" />
+
+
 ## 实现功能
 1. 自动轮播的广告栏功能
 2. 跟随页面变化的Indicator
