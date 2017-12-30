@@ -33,5 +33,3 @@ HelloViewPager是Hello系列的子项目，学习知识点的同时，通过造�
 PromotionView promotionView = new PromotionView(this);
 promotionView.show();
 ```
-
-## 开源协议
