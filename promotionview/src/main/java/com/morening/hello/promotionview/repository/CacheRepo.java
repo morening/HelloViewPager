@@ -1,7 +1,5 @@
 package com.morening.hello.promotionview.repository;
 
-import com.morening.hello.promotionview.model.DataBean;
-
 import java.util.List;
 
 /**

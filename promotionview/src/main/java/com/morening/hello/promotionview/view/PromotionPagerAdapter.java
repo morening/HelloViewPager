@@ -54,9 +54,10 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
         item.setTitle(data.getTitle());
         if (mEnableTitleColorBalance){
             balanceTitleColor();
+        } else {
+            item.setTitleColor(mTitleColor);
         }
         item.setTitleSize(mTitleSize);
-        item.setTitleColor(mTitleColor);
         item.setTitlePosition(mLayoutParams);
         item.show();
         container.addView(item);
@@ -67,6 +68,7 @@ public class PromotionPagerAdapter<T extends DataBean> extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
 
         container.removeView((PromotionItem)object);
+        object = null;
     }
 
     protected void setTitleSize(int size){

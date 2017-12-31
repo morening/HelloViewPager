@@ -33,13 +33,13 @@ public class MainActivity extends Activity {
                 container.setOrientation(LinearLayout.VERTICAL);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (getWindow().getDecorView().getMeasuredHeight()-3*2)/4);
 
-                initPromotionView0(container, lp);
-                addDivider(container);
+//                initPromotionView0(container, lp);
+//                addDivider(container);
                 initPromotionView1(container, lp);
-                addDivider(container);
-                initPromotionView2(container, lp);
-                addDivider(container);
-                initPromotionView3(container, lp);
+//                addDivider(container);
+//                initPromotionView2(container, lp);
+//                addDivider(container);
+//                initPromotionView3(container, lp);
 
                 setContentView(container);
             }
@@ -59,10 +59,10 @@ public class MainActivity extends Activity {
         title_lp0.addRule(RelativeLayout.CENTER_IN_PARENT);
         title_lp0.bottomMargin = Utils.dp2px(MainActivity.this, 10);
         title_lp0.setMarginEnd(Utils.dp2px(MainActivity.this, 10));
-        promotionView0.setDefaultPageTitlePosition(title_lp0);
-        promotionView0.setDefaultPageTitleColor(Color.BLUE);
-        promotionView0.setDefaultPageTitleSize(Utils.sp2px(MainActivity.this, 12));
-        promotionView0.show();
+        promotionView0.setDefaultPageTitlePosition(title_lp0)
+                .setDefaultPageTitleColor(Color.BLUE)
+                .setDefaultPageTitleSize(Utils.sp2px(MainActivity.this, 12))
+                .show();
         container.addView(promotionView0, lp);
     }
 
@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
         indicator_lp1.addRule(RelativeLayout.CENTER_HORIZONTAL);
         indicator_lp1.bottomMargin = Utils.dp2px(MainActivity.this, 10);
         promotionView1.setIndicatorPosition(indicator_lp1);
-        promotionView1.setAutoScrollInterval(9000);
+        promotionView1.setAutoScrollInterval(3000);
         promotionView1.addDataRepo(new IRepository() {
             @Override
             public boolean get(List datas) {
@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
         indicator_lp3.topMargin = Utils.dp2px(MainActivity.this, 10);
         indicator_lp3.setMarginStart(Utils.dp2px(MainActivity.this, 10));
         promotionView3.setIndicatorPosition(indicator_lp3);
-        promotionView3.setAutoScrollInterval(1000);
+        promotionView3.setAutoScrollInterval(3000);
         promotionView3.addDataRepo(new IRepository() {
             @Override
             public boolean get(List datas) {

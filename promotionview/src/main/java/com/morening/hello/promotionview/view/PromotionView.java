@@ -2,23 +2,15 @@ package com.morening.hello.promotionview.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.morening.hello.promotionview.contract.Contract;
 import com.morening.hello.promotionview.presenter.PromotionPresenter;
-import com.morening.hello.promotionview.repository.CacheRepo;
-import com.morening.hello.promotionview.repository.DatabaseRepo;
 import com.morening.hello.promotionview.repository.IRepository;
-import com.morening.hello.promotionview.repository.RemoteRepo;
 import com.morening.hello.promotionview.util.Utils;
 
 import java.util.List;
@@ -38,8 +30,6 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
     private int mCurrPosition = 0;
 
     private static final int DEFAULT_INDICATOR_MARGIN_BOTTOM = 126;
-    private static final long DEFAULT_INTERVAL_AUTO_SCROLL = 3000L;
-    private long mAutoScrollInterval = DEFAULT_INTERVAL_AUTO_SCROLL;
 
     private PromotionPresenter mPresenter = null;
     private boolean mEnableAutoScroll = true;
@@ -270,7 +260,6 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
         mPromotionPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                mCurrPosition = position;
             }
 
             @Override
@@ -281,27 +270,6 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
             @Override
             public void onPageScrollStateChanged(int state) {
 
-            }
-        });
-        mPromotionPager.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:   // 0
-                        mPromotionPager.cancelAutoScroll();
-                        break;
-                    case MotionEvent.ACTION_UP:     // 1
-                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mEnableAutoScroll){
-                                    mPromotionPager.startAutoScroll(mCurrPosition);
-                                }
-                            }
-                        }, mAutoScrollInterval);
-                        break;
-                }
-                return false;
             }
         });
         mPromotionPager.setSlideNumber(datas.size());
@@ -367,7 +335,6 @@ public class PromotionView<T extends BaseView> extends RelativeLayout implements
     public PromotionView setAutoScrollInterval(long interval){
         if (mPromotionPager != null){
             mPromotionPager.setAutoScrollInterval(interval);
-            mAutoScrollInterval = interval;
         }
         return this;
     }
