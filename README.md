@@ -28,8 +28,37 @@ HelloViewPager是Hello系列的子项目，学习知识点的同时，通过造�
 5. 尽可能完善文档
 
 ## 如何快速使用
-`两行代码`，快速完成应用
+`两行代码`，完成快速应用
 ```Java
 PromotionView promotionView = new PromotionView(this);
 promotionView.show();
 ```
+## 接口列表
+### Indicator
+* setIndicatorCustomView(List<T> customViews)  设置Indicator自定义View
+* setIndicatorCustomViewPosition(int width, int height, int marginStart, int marginEnd)  设置Indicator自定义View的位置
+* setIndicatorPosition(LayoutParams lp)  设置Indicator的位置
+* getIndicatorPosition()  获取Indicator的位置
+* setIndicatorColor(int selected, int unselected)  设置Indicator的颜色
+* enableIndicatorColorBalance(boolean enable)  是否开启Indicator颜色平衡
+  
+### PromotionView
+* setPromotionTitleSize(int size)  设置Promotion标题字体大小
+* setPromotionTitleColor(int color)  设置Promotion标题字体颜色
+* enablePromotionTitleColorBalance(boolean enable)  是否开启Promotion标题字体颜色颜色平衡
+* setTitlePosition(LayoutParams lp)  设置Promotion标题位置
+* getTitlePosition()  获取Promotion标题位置
+
+### 默认页面
+* setDefaultPageTitle(String title)  设置默认页面标题
+* setDefaultPageTitleSize(int size)  设置默认页面标题字体大小
+* setDefaultPageTitleColor(int color)  设置默认页面标题字体颜色
+* setDefaultPageTitlePosition(LayoutParams lp)  设置默认页面标题位置
+* setDefaultPageBgImage(Drawable bgDrawable)  设置默认页面背景图片
+
+### 自动轮播
+* enableAutoScroll(boolean enable)  是否启动自动轮播
+* setAutoScrollInterval(long interval)  设置自动轮播时间间隔
+
+### 数据源
+* addDataRepo(IRepository repo)  添加数据源
